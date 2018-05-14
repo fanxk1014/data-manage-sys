@@ -7,9 +7,9 @@
       </div>
     </el-row>
     <el-button-group id="btnNav">
-      <el-button type="primary">我要识别</el-button>
-      <el-button type="primary">识别历史</el-button>
-      <el-button type="primary">知识库</el-button>
+      <router-link to="/"><el-button type="primary">我要识别</el-button></router-link>
+      <router-link to="/history"><el-button type="primary">识别历史</el-button></router-link>
+      <router-link to="/library"><el-button type="primary">知识库</el-button></router-link>
     </el-button-group>
     <router-view></router-view>
   </div>
@@ -23,11 +23,6 @@ export default {
     return {
       show:true,
       msg: 'Welcome to Your Vue.js App'
-    }
-  },
-  methods:{
-    toCheck:function(){
-
     }
   }
 }

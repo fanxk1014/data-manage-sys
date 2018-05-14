@@ -14,9 +14,9 @@ export default new Router({
       name: 'Main',
       component: Main,
       children:[
-        {path:'/Check',component:Check},
-        {path:'/History',component:History},
-        {path:'/',component:Library}
+        {path:'/',component:Check},
+        {path:'/history',component:History},
+        {path:'/library',component:Library}
       ]
     }
   ]

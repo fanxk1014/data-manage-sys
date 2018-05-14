@@ -6,7 +6,7 @@
         <el-row :gutter="20">
           <el-col :span="4">
             <div class="grid-content bg-purple">
-              易达科技自然语言识别系统 {{height}}
+              易达科技自然语言识别系统
             </div>
           </el-col>
           <el-col :span="1" class="right"><div class="grid-content bg-purple-light">
@@ -78,7 +78,6 @@
   export default {
     data () {
       return {
-        height:'',
         msg: 'This is Hi1 page',
         styleObject: {
           color: 'red',
@@ -91,8 +90,6 @@
       console.log("%c%s", "color:red","el     : " + this.$el); //undefined
       console.log("%c%s", "color:red","data   : " + this.$data); //已被初始化
       console.log("%c%s", "color:red","message: " + this.message); //已被初始化
-      this.height = window.innerHeight;
-
     },
     beforeMount: function () {
       console.group('beforeMount 挂载前状态===============》');
@@ -142,7 +139,7 @@
   }
 
   .el-aside {
-    background-color: #f1f1f1;
+    background-color: #FFFFFF;
     color: #333;
     text-align: center;
     line-height: 200px;
