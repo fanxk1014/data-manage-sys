@@ -3,29 +3,37 @@
     <el-input placeholder="输入文档名称或文本内容模糊查询" class="input-with-select">
       <el-button slot="append" icon="el-icon-search"></el-button>
     </el-input>
-    <el-table
-      ref="multipleTable"
-      :data="tableData3"
-      tooltip-effect="dark"
-      style="width: 100%">
+    <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" style="width: 100%">
       <el-table-column
-        type="selection"
-        width="55">
-      </el-table-column>
-      <el-table-column
-        label="日期"
+        label="序号"
         width="120">
         <template slot-scope="scope">{{ scope.row.date }}</template>
       </el-table-column>
       <el-table-column
         prop="name"
-        label="姓名"
-        width="120">
+        label="文件名/文本内容">
       </el-table-column>
       <el-table-column
         prop="address"
-        label="地址"
+        label="识别时间"
         show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column
+        prop="address"
+        label="文件类型"
+        show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column
+        prop="address"
+        label="知识类型"
+        show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column prop="" label="操作" show-overflow-tooltip>
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            @click="handleEdit(scope.$index, scope.row)">详情</el-button>
+        </template>
       </el-table-column>
     </el-table>
   </div>
@@ -37,37 +45,28 @@
     name: 'History',
     data() {
       return {
-        tableData3: [{
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
+        tableData: [{
           date: '2016-05-02',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1518 弄'
         }, {
           date: '2016-05-04',
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
+          address: '上海市普陀区金沙江路 1517 弄'
         }, {
           date: '2016-05-01',
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
+          address: '上海市普陀区金沙江路 1519 弄'
         }, {
-          date: '2016-05-08',
+          date: '2016-05-03',
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-07',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
+          address: '上海市普陀区金沙江路 1516 弄'
         }]
       }
-    }
+    },
+    mounted: function () {
+
+    },
   }
 </script>
 

@@ -23,24 +23,10 @@
               <el-menu
                 default-active="2"
                 class="el-menu-vertical-demo">
-                <el-submenu index="1">
-                  <template slot="title">
-                    <i class="el-icon-location"></i>
-                    <span>导航一</span>
-                  </template>
-                  <el-menu-item-group>
-                    <template slot="title">分组一</template>
-                    <el-menu-item index="1-1">选项1</el-menu-item>
-                    <el-menu-item index="1-2">选项2</el-menu-item>
-                  </el-menu-item-group>
-                  <el-menu-item-group title="分组2">
-                    <el-menu-item index="1-3">选项3</el-menu-item>
-                  </el-menu-item-group>
-                  <el-submenu index="1-4">
-                    <template slot="title">选项4</template>
-                    <el-menu-item index="1-4-1">选项1</el-menu-item>
-                  </el-submenu>
-                </el-submenu>
+                <el-menu-item index="1">
+                  <i class="el-icon-setting"></i>
+                  <span slot="title">导航一</span>
+                </el-menu-item>
                 <el-menu-item index="2">
                   <i class="el-icon-menu"></i>
                   <span slot="title">导航二</span>
@@ -85,25 +71,8 @@
         }
       }
     },
-    created: function () {
-      console.group('created 创建完毕状态===============》');
-      console.log("%c%s", "color:red","el     : " + this.$el); //undefined
-      console.log("%c%s", "color:red","data   : " + this.$data); //已被初始化
-      console.log("%c%s", "color:red","message: " + this.message); //已被初始化
-    },
-    beforeMount: function () {
-      console.group('beforeMount 挂载前状态===============》');
-      console.log("%c%s", "color:red","el     : " + (this.$el)); //已被初始化
-      console.log(this.$el);
-      console.log("%c%s", "color:red","data   : " + this.$data); //已被初始化
-      console.log("%c%s", "color:red","message: " + this.message); //已被初始化
-    },
     mounted: function () {
-      console.group('mounted 挂载结束状态===============》');
-      console.log("%c%s", "color:red","el     : " + this.$el); //已被初始化
-      console.log(this.$el);
-      console.log("%c%s", "color:red","data   : " + this.$data); //已被初始化
-      console.log("%c%s", "color:red","message: " + this.message); //已被初始化
+
     },
   }
 </script>
