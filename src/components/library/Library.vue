@@ -4,13 +4,8 @@
       <el-button slot="append" @click="search" icon="el-icon-search"></el-button>
     </el-input>
     <el-button type="primary" @click="dialogVisible = true">新增知识库</el-button>
-{{this.tableData}}
-    <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" style="width: 100%">
-      <el-table-column
-        label="序号"
-        width="120">
-        <!--<template slot-scope="scope">{{ scope.row.date }}</template>-->
-      </el-table-column>
+
+    <el-table ref="multipleTable" border :data="tableData[0]" tooltip-effect="dark" style="width: 100%">
       <el-table-column
         prop="fileName"
         label="文件名"
@@ -27,22 +22,22 @@
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="fileType"
         label="文件类型"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="field_7"
         label="知识类型"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="indexingType"
         label="索引类型"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="indexingTime"
         label="索引时间"
         show-overflow-tooltip>
       </el-table-column>
@@ -52,12 +47,6 @@
         show-overflow-tooltip>
       </el-table-column>
     </el-table>
-
-    <el-pagination
-      background
-      layout="prev, pager, next"
-      :total="1000">
-    </el-pagination>
 
     <el-dialog
       title="新增知识库"
@@ -87,7 +76,7 @@
     data() {
       return {
         fileName: '',
-        tableData:[],
+        tableData: [],
         options: [{
           value: '',
           label: ''
@@ -111,16 +100,12 @@
       search:function(){
         this.$http.post('http://192.168.0.2:18885/mock/45/doc/searchDocument/', {
           page: 0,
-          size: 3,
+          size: 10,
           fileName: this.fileName,
         })
-          .then(function (response) {
-            console.log(response.data.data.content);
-            // this.set(data.tableData,response.data.data.content)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        .then((response) => {
+          this.$set(this.tableData,0,response.data.data.content);
+        })
       }
     }
   }

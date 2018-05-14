@@ -7,7 +7,7 @@
         <th width="600px;">归集知识</th>
         <th>
           知识案例
-          <el-button class="right" @click="dialogVisible = true" type="text">识别详情</el-button>
+          <el-button class="right" @click="dialogVisible = true" type="text"><span @click="detail">识别详情</span></el-button>
         </th>
       </tr>
       <tr>
@@ -63,6 +63,8 @@
       :visible.sync="dialogVisible"
       width="80%" :before-close="handleClose">
 
+
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -99,33 +101,36 @@
       },
       check:function(){
         if(this.radio == 1){//文本
-          axios.post('http://192.168.0.2:18885/mock/45/search/searchingIndex', {
+          this.$http.post('http://192.168.0.2:18885/mock/45/search/searchingIndex', {
             similarDegree: this.similarDegree,
             targetLength: this.targetLength,
             searchTxt: this.searchTxt,
-            searchIngType
+            searchIngType: 'txt'
           })
-            .then(function (response) {
-              console.log(response);
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
+          .then((response) => {
+            console.log(response);
+          })
         }else if(this.radio == 2){//文档
-          axios.post('http://192.168.0.2:18885/mock/45/search/searchingIndex', {
-            similarDegree: this.similarDegree,
-            targetLength: this.targetLength,
-            searchTxt: this.searchTxt,
-            searchIngType: "txt"
-          })
-            .then(function (response) {
-              console.log(response);
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
+          // this.$http.post('http://192.168.0.2:18885/mock/45/search/searchingIndex', {
+          //   similarDegree: this.similarDegree,
+          //   targetLength: this.targetLength,
+          //   searchTxt: '',
+          //   searchIngType: '',
+          //   searchFile:
+          // })
+          // .then((response) => {
+          //   console.log(response);
+          // })
         }
 
+      },
+      detail:function(){
+        this.$http.post('http://192.168.0.2:18885/mock/45/search/searchDetails', {
+          searchId: 2
+        })
+        .then((response) => {
+          console.log(response);
+        })
       }
     }
   }
