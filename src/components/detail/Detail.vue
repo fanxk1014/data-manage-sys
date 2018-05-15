@@ -1,9 +1,9 @@
 <template>
   <div>
     <!--{{msg}}-->
-     <!--{{$route.name}}-->
+     {{$route.name}}
     =>{{$route.params.username}}::
-    <!--{{$route.params.age}}-->
+    {{$route.params.age}}
   </div>
 </template>
 
