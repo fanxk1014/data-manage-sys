@@ -87,6 +87,7 @@
     margin-top: 0;
     height: 100%;
   }
+
   body,html{
     height: 100%;
   }

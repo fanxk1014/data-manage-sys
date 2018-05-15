@@ -1,6 +1,9 @@
 <template>
   <div>
-    {{msg}}-{{$route.params.key}}
+    <!--{{msg}}-->
+     <!--{{$route.name}}-->
+    =>{{$route.params.username}}::
+    <!--{{$route.params.age}}-->
   </div>
 </template>
 

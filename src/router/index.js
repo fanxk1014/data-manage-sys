@@ -19,7 +19,8 @@ export default new Router({
           component:Check,
           children:[
             {
-              path:'/',
+              path:'/detail',
+              name:'detail',
               component:Detail
             }
           ]
@@ -30,6 +31,7 @@ export default new Router({
           children:[
             {
               path:'/',
+              // name:'detail',
               component:Detail
             }
           ]

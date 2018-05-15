@@ -8,7 +8,7 @@
         <th>
           知识案例
           <el-button class="right" @click="dialogVisible = true" type="text">
-            <router-link to="/">
+            <router-link :to="{name:'detail',params:{username:'222',age:radio}}">
               识别详情
             </router-link>
           </el-button>
