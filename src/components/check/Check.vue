@@ -4,10 +4,14 @@
     <table>
       <tr>
         <th width="200px;">知识分类</th>
-        <th width="600px;">归集知识</th>
+        <th width="500px;">归集知识</th>
         <th>
           知识案例
-          <el-button class="right" @click="dialogVisible = true" type="text"><span @click="detail">识别详情</span></el-button>
+          <el-button class="right" @click="dialogVisible = true" type="text">
+            <router-link to="/">
+              识别详情
+            </router-link>
+          </el-button>
         </th>
       </tr>
       <tr>
@@ -66,6 +70,30 @@
         </td>
         <td>
 
+          <el-table
+            :data="tableData"
+            style="width: 100%" height="450">
+            <el-table-column
+              prop="fileName"
+              label="文件名"
+              width="250">
+            </el-table-column>
+            <el-table-column
+              prop="similarDegree"
+              label="匹配度"
+              width="80">
+            </el-table-column>
+            <el-table-column
+              label="相似内容"
+              width="100"
+              prop="similarContent">
+            </el-table-column>
+            <el-table-column
+              label="目标内容"
+              prop="targetContent">
+            </el-table-column>
+          </el-table>
+
         </td>
       </tr>
     </table>
@@ -75,7 +103,7 @@
       :visible.sync="dialogVisible"
       width="80%" :before-close="handleClose">
 
-
+        <router-view></router-view>
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -103,7 +131,9 @@
         checked3:'',
         dialogFormVisible: false,
         dialogVisible: false,
-        fileList: []
+        fileList: [],
+        tableData: [],
+        searchId: ''
       }
     },
     methods: {
@@ -118,6 +148,9 @@
             url: 'http://192.168.0.2:49003/nlp/search/searchingIndex',
             method: 'post',
             data: {
+              // similarDegree: this.similarDegree,
+              // targetLength: this.targetLength,
+              // searchTxt: this.searchTxt,
               similarDegree: 0.5,
               targetLength: 1,
               searchTxt: '系统',
@@ -136,7 +169,8 @@
             }
           })
             .then((response) => {
-              console.log(response.data.data.searchingList);
+              this.searchId = response.data.data.searchingMainId;
+              this.tableData = response.data.data.searchingList;
             })
             .catch((response) => {
               console.log(response);
@@ -176,12 +210,7 @@
 
       },
       detail:function(){
-        this.axios.post('http://192.168.0.2:18885/mock/45/search/searchDetails', {
-          searchId: 2
-        })
-        .then((response) => {
-          console.log(response);
-        })
+
       },
       handleRemove(file, fileList) {
         console.log(file, fileList);
