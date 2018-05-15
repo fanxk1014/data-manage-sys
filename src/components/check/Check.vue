@@ -45,7 +45,19 @@
             <textarea v-model="searchTxt" rows="6" cols="40" style="resize: none;"></textarea>
           </p>
           <p v-if="radio == 2">
-            <span class="title">文档</span>
+            <el-upload
+              class="upload-demo"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
+              :before-remove="beforeRemove"
+              multiple
+              :limit="3"
+              :on-exceed="handleExceed"
+              :file-list="fileList">
+              <el-button size="small" type="primary">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip">上传文件不超过500kb</div>
+            </el-upload>
           </p>
           <p>
             <el-button type="primary" round @click="check">检索</el-button>
@@ -84,53 +96,104 @@
         similarDegree: '',
         targetLength: '',
         searchTxt: '',
+        searchIngType: '',
+        searchFile: '',
         checked1:'',
         checked2:'',
         checked3:'',
         dialogFormVisible: false,
-        dialogVisible: false
+        dialogVisible: false,
+        fileList: []
       }
     },
     methods: {
       handleClose(done) {
-        this.$confirm('确认关闭？')
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
+        console.log()
+        done();
       },
       check:function(){
         if(this.radio == 1){//文本
-          this.$http.post('http://192.168.0.2:18885/mock/45/search/searchingIndex', {
-            similarDegree: this.similarDegree,
-            targetLength: this.targetLength,
-            searchTxt: this.searchTxt,
-            searchIngType: 'txt'
+
+          this.axios({
+            url: 'http://192.168.0.2:49003/nlp/search/searchingIndex',
+            method: 'post',
+            data: {
+              similarDegree: 0.5,
+              targetLength: 1,
+              searchTxt: '系统',
+              searchIngType: 'txt'
+            },
+            transformRequest: [function (data) {
+              let ret = ''
+              for (let it in data) {
+                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+              }
+              return ret
+            }],
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
           })
-          .then((response) => {
-            console.log(response);
-          })
+            .then((response) => {
+              console.log(response.data.data.searchingList);
+            })
+            .catch((response) => {
+              console.log(response);
+            });
+
         }else if(this.radio == 2){//文档
-          // this.$http.post('http://192.168.0.2:18885/mock/45/search/searchingIndex', {
-          //   similarDegree: this.similarDegree,
-          //   targetLength: this.targetLength,
-          //   searchTxt: '',
-          //   searchIngType: '',
-          //   searchFile:
-          // })
-          // .then((response) => {
-          //   console.log(response);
-          // })
+
+          this.axios({
+            url: 'http://192.168.0.2:49003/nlp/search/searchingIndex/',
+            method: 'post',
+            data: {
+              similarDegree: this.similarDegree,
+              targetLength: this.targetLength,
+              searchTxt: this.searchTxt,
+              searchIngType: 'txt'
+            },
+            transformRequest: [function (data) {
+              let ret = ''
+              for (let it in data) {
+                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+              }
+              return ret
+            }],
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          })
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((response) => {
+              console.log(response);
+            });
+
         }
 
       },
       detail:function(){
-        this.$http.post('http://192.168.0.2:18885/mock/45/search/searchDetails', {
+        this.axios.post('http://192.168.0.2:18885/mock/45/search/searchDetails', {
           searchId: 2
         })
         .then((response) => {
           console.log(response);
         })
+      },
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePreview(file) {
+        console.log(file);
+      },
+      handleExceed(files, fileList) {
+        this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+      },
+      beforeRemove(file, fileList) {
+        return this.$confirm(`确定移除 ${ file.name }？`);
       }
     }
   }
@@ -171,6 +234,7 @@
   }
   td{
     color: #606266;
+    padding: 5px 20px;
   }
   p{
     margin-bottom: 5px;
