@@ -100,7 +100,8 @@
         :file-list="fileList"
         :auto-upload="false">
         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-        <div slot="tip" class="el-upload__tip">文件不超过500kb</div>
+        <div slot="tip" class="el-upload__tip">1. 目前支持doc、docx、zip格式文件上传</div>
+        <div slot="tip" class="el-upload__tip">2. ZIP文件会读取里面的文档信息</div>
       </el-upload>
 
       <span slot="footer" class="dialog-footer">
