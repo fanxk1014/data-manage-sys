@@ -76,21 +76,17 @@
             <el-table-column
               prop="fileName"
               label="文件名"
-              width="250">
+              width="">
             </el-table-column>
             <el-table-column
               prop="similarDegree"
               label="匹配度"
-              width="80">
+              width="">
             </el-table-column>
             <el-table-column
               label="相似内容"
-              width="100"
+              width=""
               prop="similarContent">
-            </el-table-column>
-            <el-table-column
-              label="目标内容"
-              prop="targetContent">
             </el-table-column>
           </el-table>
 

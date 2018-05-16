@@ -1,6 +1,7 @@
 <template>
   <div>
-    内容对比{{$route.params.searchId}}-{{searchId}}
+    内容对比
+    <!--{{$route.params.searchId}}-{{searchId}}-->
     <el-table
       :data="tableData"
       border height="500"

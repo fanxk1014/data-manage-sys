@@ -3,7 +3,7 @@
     <el-input placeholder="输入文档名称模糊查询" v-model="fileName" class="input-with-select">
       <el-button slot="append" @click="search" icon="el-icon-search"></el-button>
     </el-input>
-    <el-button type="primary" @click="dialogVisible = true">新增知识库</el-button>
+    <el-button type="primary" @click="dialogVisible = true;openDialog()">新增知识库</el-button>
     <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" style="width: 100%">
       <el-table-column
         prop="fileName"
@@ -46,30 +46,31 @@
         show-overflow-tooltip>
       </el-table-column>
     </el-table>
-
+{{selArr}}
     <el-dialog
       title="新增知识库"
       :visible.sync="dialogVisible"
       width="30%" :before-close="handleClose">
 
-      <!--<el-treeselect-->
-        <!--multiple-->
-        <!--v-model="title"-->
-        <!--:remoteSearch="true"-->
-        <!--placeholder="请输入搜索内容"-->
-        <!--:data="treeData"-->
-        <!--:props="props"-->
-        <!--:isEdit="true"-->
-        <!--:clickParent="true"-->
-        <!--:disabled="true"-->
-        <!--:renderContent=""-->
-        <!--@treeSearch="searchFun"-->
-        <!--@nodeClick="nodeClick"-->
-        <!--@treeNodeCheckFun="treeNodeCheckFun"-->
-        <!--@show="showFun"-->
-        <!--@hide="function(val){hideMdataFun(scope.row,val)}"-->
-      <!--&gt;-->
-      <!--</el-treeselect>-->
+      <el-autocomplete
+        popper-class="my-autocomplete"
+        v-model="state3"
+        :fetch-suggestions="querySearch"
+        placeholder="请输入内容"
+        @select="handleSelect">
+        <i
+          class="el-icon-search el-input__icon"
+          slot="suffix"
+          @click="handleIconClick">
+        </i>
+        <template slot-scope="{ item }">
+          <div class="first">{{ item.name }}</div>
+
+          <div class="sec">{{item.children[0].name}}</div>
+          <div class="sec">{{item.children[1].name}}</div>
+          <!--<div v-if="item.children" class="sec">{{item.children[1].name}}</div>-->
+        </template>
+      </el-autocomplete>
 
       <el-upload
         class="upload-demo"
@@ -101,40 +102,23 @@
     name: 'Library',
     data() {
       return {
+        title: '请选择知识库类型',
         fileName: '',
         tableData: [],
-        options: [{
-          label: '招标代理',
-          options: [{
-            value: 'Shanghai',
-            label: '招标文件'
-          }, {
-            value: 'Beijing',
-            label: '合同范本'
-          }]
-        }, {
-          label: '工程咨询',
-          options: [{
-            value: 'Chengdu',
-            label: '可行性研究'
-          }]
-        }],
-        value: '请选择知识库类型',
         fileList: [
           {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}
         ],
         dialogFormVisible: false,
         dialogVisible: false,
-        title: 'test',
-        treeData: [{flowId: 1, name: '123'}],
-        props: {
-          label: 'name',
-          value: 'flowId'
-        }
+        restaurants: [],
+        state3: '',
+        selArr: []
       }
     },
-    components: {elTreeselect},
     methods: {
+      openDialog:function(){
+        this.restaurants = this.loadAll();
+      },
       handleClose(done) {
         done();
       },
@@ -179,6 +163,55 @@
         return this.$confirm(`确定移除 ${ file.name }？`);
       },
 
+      // 知识库类型tree选择器
+      querySearch(queryString, cb) {
+        var restaurants = this.restaurants;
+        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+        // 调用 callback 返回建议列表的数据
+        cb(results);
+      },
+      createFilter(queryString) {
+        return (restaurant) => {
+          return (restaurant);
+        };
+      },
+      loadAll() {
+        // return [
+        //   { "name": "三全鲜食（北新泾店）" },
+        //   { "name": "Hot honey 首尔炸鸡（仙霞路）"},
+        //   { "name": "新旺角茶餐厅" },
+        // ];
+        console.log('loadAll:',this.selArr);
+        return this.selArr;
+      },
+      handleSelect(item) {
+        this.state3 = item.name;
+        this.state3 = item.children[0].name
+        console.log(item);
+      },
+      handleIconClick(ev) {//点击sel图标
+        // console.log(ev);
+      }
+,
+    },
+    mounted:function(){
+
+      this.axios({
+        url: 'http://192.168.0.2:49003/nlp/tree/getTree',
+        method: 'get',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+        .then((response) => {
+          this.selArr = response.data.data;
+        })
+        .catch((response) => {
+          console.log(response);
+        });
+
+
     }
   }
 </script>
@@ -205,4 +238,25 @@
   .el-select{
     margin-bottom: 10px;
   }
+  #sel-tree{
+    width: 200px;
+    height: 150px;
+    overflow: auto;
+    border: 1px solid #e4e7ed;
+  }
+  .my-autocomplete li {
+    line-height: normal;
+    padding: 7px;
+  }
+  .my-autocomplete .first {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .my-autocomplete .sec {
+    margin-left: 10px;
+  }
+  .my-autocomplete .highlighted .addr {
+    color: #ddd;
+  }
+
 </style>
