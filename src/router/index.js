@@ -30,8 +30,8 @@ export default new Router({
           component:History,
           children:[
             {
-              path:'/',
-              // name:'detail',
+              path:'/history/detail',
+              name:'history/detail',
               component:Detail
             }
           ]

@@ -5,7 +5,7 @@
     </el-input>
     <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" style="width: 100%">
       <el-table-column
-        prop="id"
+        prop="id" width="50"
         label="序号">
       </el-table-column>
       <el-table-column
@@ -31,10 +31,27 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="handleEdit(scope.$index, scope.row)">详情</el-button>
+            @click="handleEdit(scope.$index, scope.row);dialogVisible = true;">
+              <router-link :to="{name:'history/detail',params:{searchId:id}}">
+                详情
+              </router-link>
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
+    
+    <el-dialog
+      title="详情"
+      :visible.sync="dialogVisible"
+      width="80%"
+      :before-close="handleClose">
+      <router-view></router-view>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+  </span>
+    </el-dialog>
+
   </div>
 
 </template>
@@ -45,12 +62,15 @@
     data() {
       return {
         tableData: [],
-        value: ''
+        value: '',
+        id: '',
+        // dialogFormVisible: false,
+        dialogVisible: false,
+        searchStatus: false
       }
     },
     methods: {
       search: function(){
-
         this.axios({
           url: 'http://192.168.0.2:49003/nlp/search/searchHistory/',
           method: 'post',
@@ -72,11 +92,20 @@
           }
         })
           .then((response) => {
+            console.log(response.data.data.content);
             this.tableData = response.data.data.content;
+            this.searchStatus = true;
           })
           .catch((response) => {
             console.log(response);
           });
+      },
+      handleEdit(index, row) {
+        console.log(row.id);
+        this.id = row.id
+      },
+      handleClose(done) {
+        done();
       }
     },
     mounted: function () {

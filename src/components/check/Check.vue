@@ -8,7 +8,7 @@
         <th>
           知识案例
           <el-button class="right" @click="dialogVisible = true" type="text">
-            <router-link :to="{name:'detail',params:{username:'222',age:radio}}">
+            <router-link :to="{name:'detail',params:{username:'222',searchId:searchId,radio:radio}}">
               识别详情
             </router-link>
           </el-button>
@@ -138,7 +138,6 @@
     },
     methods: {
       handleClose(done) {
-        console.log()
         done();
       },
       check:function(){
@@ -207,9 +206,6 @@
             });
 
         }
-
-      },
-      detail:function(){
 
       },
       handleRemove(file, fileList) {
