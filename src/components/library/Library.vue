@@ -46,7 +46,16 @@
         show-overflow-tooltip>
       </el-table-column>
     </el-table>
-{{selArr}}
+
+    <el-pagination v-if="tableData != ''"
+                   @size-change="handleSizeChange"
+                   @current-change="handleCurrentChange"
+                   :current-page.sync="currentPage"
+                   :page-size="10"
+                   layout="total, prev, pager, next"
+                   :total="totalItems">
+    </el-pagination>
+
     <el-dialog
       title="新增知识库"
       :visible.sync="dialogVisible"
@@ -64,31 +73,39 @@
           @click="handleIconClick">
         </i>
         <template slot-scope="{ item }">
-          <div class="first">{{ item.name }}</div>
+          <!--<div class="first">{{ item.name }}</div>-->
 
           <div class="sec">{{item.children[0].name}}</div>
-          <div class="sec">{{item.children[1].name}}</div>
+          <!--<div class="sec">{{item.children[1].name}}</div>-->
           <!--<div v-if="item.children" class="sec">{{item.children[1].name}}</div>-->
         </template>
       </el-autocomplete>
 
+      <!--<el-tree-->
+        <!--:data="selArr"-->
+        <!--show-checkbox-->
+        <!--node-key="id"-->
+        <!--:default-expanded-keys="[2, 3]"-->
+        <!--:default-checked-keys="[5]"-->
+        <!--:props="defaultProps">-->
+      <!--</el-tree>-->
+
       <el-upload
         class="upload-demo"
-        action="https://jsonplaceholder.typicode.com/posts/"
+        ref="upload" multiple
+        :action="url"
+        :data="data"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
-        :before-remove="beforeRemove"
-        multiple
-        :limit="3"
-        :on-exceed="handleExceed"
-        :file-list="fileList">
-        <el-button size="small" type="primary">点击上传</el-button>
-        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        :file-list="fileList"
+        :auto-upload="false">
+        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+        <div slot="tip" class="el-upload__tip">文件不超过500kb</div>
       </el-upload>
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="submitUpload">上 传</el-button>
       </span>
     </el-dialog>
 
@@ -105,14 +122,17 @@
         title: '请选择知识库类型',
         fileName: '',
         tableData: [],
-        fileList: [
-          {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}
-        ],
+        fileList: [],
         dialogFormVisible: false,
         dialogVisible: false,
+        selArr: [],
         restaurants: [],
+        file: '',
         state3: '',
-        selArr: []
+        data:{treeId:1},
+        url:"http://192.168.0.2:49003/nlp/doc/upload/",
+        currentPage: 1,
+        totalItems: ''
       }
     },
     methods: {
@@ -127,9 +147,9 @@
           url: 'http://192.168.0.2:49003/nlp/doc/searchDocument/',
           method: 'post',
           data: {
-            page: 1,
-            size: 5,
-            fileName: '',
+            page: 0,
+            size: 10,
+            fileName: this.fileName,
           },
           transformRequest: [function (data) {
             let ret = ''
@@ -144,11 +164,16 @@
           }
         })
           .then((response) => {
+            this.totalItems = response.data.data.totalElements;
             this.tableData = response.data.data.content;
+            console.log(response.data.data.content);
           })
           .catch((response) => {
             console.log(response);
           });
+      },
+      submitUpload() {
+        this.$refs.upload.submit();
       },
       handleRemove(file, fileList) {
         console.log(file, fileList);
@@ -161,6 +186,10 @@
       },
       beforeRemove(file, fileList) {
         return this.$confirm(`确定移除 ${ file.name }？`);
+      },
+      getFile($event){
+        this.file = $event.target.files[0] //获取要上传的文件
+        console.log(this.file);
       },
 
       // 知识库类型tree选择器
@@ -176,23 +205,51 @@
         };
       },
       loadAll() {
-        // return [
-        //   { "name": "三全鲜食（北新泾店）" },
-        //   { "name": "Hot honey 首尔炸鸡（仙霞路）"},
-        //   { "name": "新旺角茶餐厅" },
-        // ];
-        console.log('loadAll:',this.selArr);
+        // console.log('loadAll:',this.selArr);
         return this.selArr;
       },
       handleSelect(item) {
-        this.state3 = item.name;
         this.state3 = item.children[0].name
-        console.log(item);
+        console.log(item.children[0].name);
       },
       handleIconClick(ev) {//点击sel图标
         // console.log(ev);
+      },
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        this.currentPage = val;
+        this.axios({
+          url: 'http://192.168.0.2:49003/nlp/doc/searchDocument/',
+          method: 'post',
+          data: {
+            fileName: this.fileName,
+            page: this.currentPage-1,
+            size: 10
+          },
+          transformRequest: [function (data) {
+            let ret = ''
+            for (let it in data) {
+              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+            }
+            return ret
+          }],
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        })
+          .then((response) => {
+            this.totalItems = response.data.data.totalElements;
+            this.tableData = response.data.data.content;
+            this.searchStatus = true;
+          })
+          .catch((response) => {
+            console.log(response);
+          });
       }
-,
+
     },
     mounted:function(){
 
@@ -235,9 +292,13 @@
     width: 300px;
     margin-bottom: 10px;
   }
+  .upload-demo,#file{
+    margin-top: 10px;
+  }
   .el-select{
     margin-bottom: 10px;
   }
+
   #sel-tree{
     width: 200px;
     height: 150px;

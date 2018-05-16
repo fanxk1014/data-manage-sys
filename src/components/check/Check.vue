@@ -51,16 +51,15 @@
           <p v-if="radio == 2">
             <el-upload
               class="upload-demo"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              ref="upload" multiple
+              :action="url"
+              :data="data2"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
-              :before-remove="beforeRemove"
-              multiple
-              :limit="3"
-              :on-exceed="handleExceed"
-              :file-list="fileList">
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">上传文件不超过500kb</div>
+              :file-list="fileList"
+              :auto-upload="false">
+              <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+              <div slot="tip" class="el-upload__tip">文件不超过500kb</div>
             </el-upload>
           </p>
           <p>
@@ -73,6 +72,10 @@
           <el-table
             :data="tableData"
             style="width: 100%" height="450">
+            <el-table-column
+              type="index"
+              width="50">
+            </el-table-column>
             <el-table-column
               prop="fileName"
               label="文件名"
@@ -94,7 +97,7 @@
       </tr>
     </table>
 
-    <el-dialog
+    <el-dialog id="dialog1"
       title="识别结果"
       :visible.sync="dialogVisible"
       width="80%" :before-close="handleClose">
@@ -129,7 +132,16 @@
         dialogVisible: false,
         fileList: [],
         tableData: [],
-        searchId: ''
+        searchId: '',
+        url:'http://192.168.0.2:49003/nlp/search/searchingIndex',
+        data2:{
+          // similarDegree: this.similarDegree,
+          // targetLength: this.targetLength,
+          similarDegree: 0.5,
+          targetLength: 1,
+          searchIngType: 'docx',
+          searchTxt: ''
+        }
       }
     },
     methods: {
@@ -173,33 +185,7 @@
 
         }else if(this.radio == 2){//文档
 
-          this.axios({
-            url: 'http://192.168.0.2:49003/nlp/search/searchingIndex/',
-            method: 'post',
-            data: {
-              similarDegree: this.similarDegree,
-              targetLength: this.targetLength,
-              searchTxt: this.searchTxt,
-              searchIngType: 'txt'
-            },
-            transformRequest: [function (data) {
-              let ret = ''
-              for (let it in data) {
-                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-              }
-              return ret
-            }],
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/x-www-form-urlencoded'
-            }
-          })
-            .then((response) => {
-              console.log(response);
-            })
-            .catch((response) => {
-              console.log(response);
-            });
+          this.$refs.upload.submit();
 
         }
 

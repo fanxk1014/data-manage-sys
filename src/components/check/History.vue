@@ -39,8 +39,17 @@
         </template>
       </el-table-column>
     </el-table>
-    
-    <el-dialog
+
+    <el-pagination v-if="tableData != ''"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="10"
+      layout="total, prev, pager, next"
+      :total="totalItems">
+    </el-pagination>
+
+    <el-dialog id="dialog2"
       title="详情"
       :visible.sync="dialogVisible"
       width="80%"
@@ -66,11 +75,14 @@
         id: '',
         // dialogFormVisible: false,
         dialogVisible: false,
-        searchStatus: false
+        searchStatus: false,
+        currentPage: 1,
+        totalItems: ''
       }
     },
     methods: {
       search: function(){
+        this.currentPage = 1;
         this.axios({
           url: 'http://192.168.0.2:49003/nlp/search/searchHistory/',
           method: 'post',
@@ -92,7 +104,7 @@
           }
         })
           .then((response) => {
-            console.log(response.data.data.content);
+            this.totalItems = response.data.data.totalElements;
             this.tableData = response.data.data.content;
             this.searchStatus = true;
           })
@@ -106,6 +118,40 @@
       },
       handleClose(done) {
         done();
+      },
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        this.currentPage = val;
+        this.axios({
+          url: 'http://192.168.0.2:49003/nlp/search/searchHistory/',
+          method: 'post',
+          data: {
+            searchWord: this.value,
+            page: this.currentPage-1,
+            size: 10
+          },
+          transformRequest: [function (data) {
+            let ret = ''
+            for (let it in data) {
+              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+            }
+            return ret
+          }],
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        })
+          .then((response) => {
+            this.totalItems = response.data.data.totalElements;
+            this.tableData = response.data.data.content;
+            this.searchStatus = true;
+          })
+          .catch((response) => {
+            console.log(response);
+          });
       }
     },
     mounted: function () {
@@ -132,5 +178,8 @@
   .input-with-select{
     width: 300px;
     margin-bottom: 10px;
+  }
+  .el-pagination{
+    margin-top: 10px;
   }
 </style>
