@@ -190,7 +190,7 @@
           this.data2.targetLength = this.targetLength;
           this.loading = true
           this.$refs.upload.submit();
-
+          this.loading = false
         }
 
       },

@@ -79,9 +79,7 @@
       }
     },
     methods:{
-      show(){
-        alert(this.historyId);
-      }
+
     },
     mounted:function(){
       if(this.$props.idType == 1){
@@ -117,6 +115,7 @@
           .catch((response) => {
             // console.log('error');
             this.tableData = [];
+            this.loading = false
           });
       }
 
@@ -157,6 +156,7 @@
             .catch((response) => {
               // console.log('error');
               this.tableData = [];
+              this.loading = false
             });
         }
       },
@@ -191,6 +191,7 @@
             .catch((response) => {
               // console.log('error');
               this.tableData = [];
+              this.loading = false
             });
         }
       },
@@ -224,6 +225,7 @@
           .catch((response) => {
             // console.log('error');
             this.tableData = [];
+            this.loading = false
           });
       }
     },
