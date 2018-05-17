@@ -55,6 +55,8 @@
               :data="data2"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :on-success="loadSuccess"
+              :on-error="loadFail"
               :file-list="fileList"
               :auto-upload="false">
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -70,6 +72,7 @@
 
           <el-table
             :data="tableData"
+            v-loading="loading"
             style="width: 100%" height="450">
             <el-table-column
               type="index"
@@ -109,10 +112,12 @@
 
 <script>
   import detail from '../detail/Detail'
+  import Global from '@/components/Global/Global'
   export default {
     name: 'Check',
     data () {
       return {
+        loading: false,
         radio: '1',//1:文本，2：文档
         similarDegree: '',
         targetLength: '',
@@ -128,10 +133,10 @@
         tableData: [],
         fileName: 'searchFile',
         searchId: '',
-        url:'/search/searchingIndex',
+        url:Global.address+'/search/searchingIndex',
         data2:{
-          similarDegree: this.similarDegree,
-          targetLength: this.targetLength,
+          similarDegree: '',
+          targetLength: '',
           searchIngType: 'docx',
           searchTxt: ''
         }
@@ -140,15 +145,18 @@
     components: {
       detail: detail
     },
+    mounted:function(){
+      console.log(Global.address)
+  },
     methods: {
       handleClose(done) {
         done();
       },
       check:function(){
         if(this.radio == 1){//文本
-
+          this.loading = true
           this.axios({
-            url: 'http://192.168.0.2:49003/search/searchingIndex',
+            url: Global.address+'/search/searchingIndex',
             method: 'post',
             data: {
               similarDegree: this.similarDegree,
@@ -171,13 +179,16 @@
             .then((response) => {
               this.searchId = response.data.data.searchingMainId;
               this.tableData = response.data.data.searchingList;
+              this.loading = false
             })
             .catch((response) => {
-              // console.log(response);
+              this.loading = false
             });
 
         }else if(this.radio == 2){//文档
-
+          this.data2.similarDegree = this.similarDegree;
+          this.data2.targetLength = this.targetLength;
+          this.loading = true
           this.$refs.upload.submit();
 
         }
@@ -194,6 +205,21 @@
       },
       beforeRemove(file, fileList) {
         return this.$confirm(`确定移除 ${ file.name }？`);
+      },
+      loadSuccess(response, file, fileList){
+        this.$message({
+          message: '上传成功',
+          type: 'success'
+        });
+        this.searchId = response.data.searchingMainId;
+        this.tableData = response.data.searchingList;
+      },
+      loadFail(){
+        this.$message({
+          showClose: true,
+          message: '上传失败',
+          type: 'error'
+        });
       }
     }
   }

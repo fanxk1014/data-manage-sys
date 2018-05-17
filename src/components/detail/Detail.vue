@@ -6,6 +6,7 @@
       <span class="title">知识列表</span>
       <el-table
         :data="tableData" border
+        v-loading="loading"
         style="width: 100%">
         <el-table-column
           type="index"
@@ -39,6 +40,7 @@
       <span class="title">内容对比</span>
       <el-table
         :data="tableData" border
+        v-loading="loading"
         style="width: 100%">
         <el-table-column
           type="index"
@@ -66,12 +68,14 @@
 </template>
 
 <script>
+  import Global from '@/components/Global/Global'
   export default {
     name: 'detail',
     data () {
       return {
         tableData:[],
-        searchId:''
+        searchId:'',
+        loading: false
       }
     },
     methods:{
@@ -86,8 +90,9 @@
         this.searchId = this.$props.historyId
       }
       if(this.searchId){
+        this.loading = true
         this.axios({
-          url: 'http://192.168.0.2:49003/search/searchDetails?searchId='+this.searchId,
+          url: Global.address+'/search/searchDetails?searchId='+this.searchId,
           method: 'get',
           data: {
             searchId: this.searchId
@@ -107,6 +112,7 @@
           .then((response) => {
             this.tableData = [];
             this.tableData = response.data.data.searchingList;
+            this.loading = false
           })
           .catch((response) => {
             // console.log('error');
@@ -117,8 +123,6 @@
     },
     watch: {
       searchId (val, oldval) {
-        // console.log('searchId改变：',val)
-
         if(this.$props.checkId){
           this.searchId = this.$props.checkId;
         }else if(this.$props.historyId) {
@@ -126,8 +130,9 @@
         }
 
         if(this.searchId) {
+          this.loading = true
           this.axios({
-            url: 'http://192.168.0.2:49003/search/searchDetails?searchId=' + this.searchId,
+            url: Global.address+'/search/searchDetails?searchId=' + this.searchId,
             method: 'get',
             data: {
               searchId: this.searchId
@@ -147,6 +152,7 @@
             .then((response) => {
               this.tableData = [];
               this.tableData = response.data.data.searchingList;
+              this.loading = false
             })
             .catch((response) => {
               // console.log('error');
@@ -158,8 +164,9 @@
         // console.log('checkId改变：',val)
         this.searchId = this.$props.checkId;
         if(this.searchId) {
+          this.loading = true
           this.axios({
-            url: 'http://192.168.0.2:49003/search/searchDetails?searchId=' + this.searchId,
+            url: Global.address+'/search/searchDetails?searchId=' + this.searchId,
             method: 'get',
             data: {
               searchId: this.searchId
@@ -179,6 +186,7 @@
             .then((response) => {
               this.tableData = [];
               this.tableData = response.data.data.searchingList;
+              this.loading = false
             })
             .catch((response) => {
               // console.log('error');
@@ -189,8 +197,9 @@
       ['historyId'](val, oldval) {
         // console.log('historyId改变：',val,oldval)
         this.searchId = this.$props.historyId;
+        this.loading = true
         this.axios({
-          url: 'http://192.168.0.2:49003/search/searchDetails?searchId='+this.searchId,
+          url: Global.address+'/search/searchDetails?searchId='+this.searchId,
           method: 'get',
           data: {
             searchId: this.searchId
@@ -210,6 +219,7 @@
           .then((response) => {
             this.tableData = [];
             this.tableData = response.data.data.searchingList;
+            this.loading = false
           })
           .catch((response) => {
             // console.log('error');

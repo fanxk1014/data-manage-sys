@@ -97,6 +97,8 @@
         :data="data"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
+        :on-success="loadSuccess"
+        :on-error="loadFail"
         :file-list="fileList"
         :auto-upload="false">
         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -115,7 +117,8 @@
 </template>
 
 <script>
-  import elTreeselect from 'el-tree-select';
+  import elTreeselect from 'el-tree-select'
+  import Global from '@/components/Global/Global'
   export default {
     name: 'Library',
     data() {
@@ -131,7 +134,7 @@
         file: '',
         state3: '',
         data:{treeId:1},
-        url:"/doc/upload/",
+        url:Global.address+"/doc/upload/",
         currentPage: 1,
         totalItems: ''
       }
@@ -145,7 +148,7 @@
       },
       search:function(){
         this.axios({
-          url: '/doc/searchDocument/',
+          url: Global.address+'/doc/searchDocument/',
           method: 'post',
           data: {
             page: 0,
@@ -222,8 +225,9 @@
       },
       handleCurrentChange(val) {
         this.currentPage = val;
+        this.loading = true
         this.axios({
-          url: '/doc/searchDocument/',
+          url: Global.address+'/doc/searchDocument/',
           method: 'post',
           data: {
             fileName: this.fileName,
@@ -245,32 +249,58 @@
           .then((response) => {
             this.totalItems = response.data.data.totalElements;
             this.tableData = response.data.data.content;
-            this.searchStatus = true;
+            this.searchStatus = false;
           })
           .catch((response) => {
             // console.log(response);
+            this.searchStatus = false;
           });
+      },
+      loadSuccess(response, file, fileList){
+        this.$message({
+          message: '上传成功',
+          type: 'success'
+        });
+      },
+      loadFail(){
+        this.$message({
+          showClose: true,
+          message: '上传失败',
+          type: 'error'
+        });
       }
 
     },
     mounted:function(){
-
+      this.loading = true
       this.axios({
-        url: '/tree/getTree',
-        method: 'get',
+        url: Global.address+'/doc/searchDocument/',
+        method: 'post',
+        data: {
+          page: 0,
+          size: 10,
+          fileName: '',
+        },
+        transformRequest: [function (data) {
+          let ret = ''
+          for (let it in data) {
+            ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+          }
+          return ret
+        }],
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       })
         .then((response) => {
-          this.selArr = response.data.data;
+          this.totalItems = response.data.data.totalElements;
+          this.tableData = response.data.data.content;
+          this.loading = false
         })
         .catch((response) => {
-          // console.log(response);
+          this.loading = false
         });
-
-
     }
   }
 </script>

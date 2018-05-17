@@ -6,6 +6,7 @@
     <el-table ref="multipleTable" border :data="tableData" tooltip-effect="dark" style="width: 100%">
       <el-table-column
         prop="id" width="50"
+        v-loading="loading"
         label="序号">
       </el-table-column>
       <el-table-column
@@ -68,6 +69,7 @@
 
 <script>
   import detail from '../detail/Detail'
+  import Global from '@/components/Global/Global'
   export default {
     name: 'History',
     data() {
@@ -75,11 +77,11 @@
         tableData: [],
         value: '',
         id: '',
-        // dialogFormVisible: false,
         dialogVisible: false,
         searchStatus: false,
         currentPage: 1,
-        totalItems: ''
+        totalItems: '',
+        loading: false
       }
     },
     components: {
@@ -88,8 +90,9 @@
     methods: {
       search: function(){
         this.currentPage = 1;
+        this.loading = true
         this.axios({
-          url: 'http://192.168.0.2:49003/search/searchHistory/',
+          url: Global.address+'/search/searchHistory/',
           method: 'post',
           data: {
             searchWord: this.value,
@@ -112,9 +115,11 @@
             this.totalItems = response.data.data.totalElements;
             this.tableData = response.data.data.content;
             this.searchStatus = true;
+            this.loading = false
           })
           .catch((response) => {
             // console.log(response);
+            this.loading = false
           });
       },
       handleEdit(index, row) {
@@ -128,8 +133,9 @@
       },
       handleCurrentChange(val) {
         this.currentPage = val;
+        this.loading = true
         this.axios({
-          url: '/search/searchHistory/',
+          url: Global.address+'/search/searchHistory/',
           method: 'post',
           data: {
             searchWord: this.value,
@@ -152,14 +158,44 @@
             this.totalItems = response.data.data.totalElements;
             this.tableData = response.data.data.content;
             this.searchStatus = true;
+            this.loading = false
           })
           .catch((response) => {
-            // console.log(response);
+            this.loading = false
           });
       }
     },
     mounted: function () {
-
+      this.loading = true
+      this.axios({
+        url: Global.address+'/search/searchHistory/',
+        method: 'post',
+        data: {
+          searchWord: this.value,
+          page: 0,
+          size: 10
+        },
+        transformRequest: [function (data) {
+          let ret = ''
+          for (let it in data) {
+            ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+          }
+          return ret
+        }],
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+        .then((response) => {
+          this.totalItems = response.data.data.totalElements;
+          this.tableData = response.data.data.content;
+          this.searchStatus = true;
+          this.loading = false
+        })
+        .catch((response) => {
+          this.loading = false
+        });
     },
   }
 </script>
