@@ -8,9 +8,7 @@
         <th>
           知识案例
           <el-button class="right" @click="dialogVisible = true" type="text">
-            <router-link :to="{name:'detail',params:{username:'222',searchId:searchId,radio:radio}}">
-              识别详情
-            </router-link>
+            识别详情
           </el-button>
         </th>
       </tr>
@@ -52,6 +50,7 @@
             <el-upload
               class="upload-demo"
               ref="upload" multiple
+              :name="fileName"
               :action="url"
               :data="data2"
               :on-preview="handlePreview"
@@ -84,12 +83,7 @@
             <el-table-column
               prop="similarDegree"
               label="匹配度"
-              width="">
-            </el-table-column>
-            <el-table-column
-              label="相似内容"
-              width=""
-              prop="similarContent">
+              width="100">
             </el-table-column>
           </el-table>
 
@@ -102,10 +96,9 @@
       :visible.sync="dialogVisible"
       width="80%" :before-close="handleClose">
 
-        <router-view></router-view>
+      <detail :checkId="searchId" :idType="1"></detail>
 
       <span slot="footer" class="dialog-footer">
-        <!--<el-button @click="dialogVisible = false">取 消</el-button>-->
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
@@ -115,6 +108,7 @@
 </template>
 
 <script>
+  import detail from '../detail/Detail'
   export default {
     name: 'Check',
     data () {
@@ -132,17 +126,19 @@
         dialogVisible: false,
         fileList: [],
         tableData: [],
+        fileName: 'searchFile',
         searchId: '',
-        url:'http://192.168.0.2:49003/nlp/search/searchingIndex',
+        url:'/search/searchingIndex',
         data2:{
-          // similarDegree: this.similarDegree,
-          // targetLength: this.targetLength,
-          similarDegree: 0.5,
-          targetLength: 1,
+          similarDegree: this.similarDegree,
+          targetLength: this.targetLength,
           searchIngType: 'docx',
           searchTxt: ''
         }
       }
+    },
+    components: {
+      detail: detail
     },
     methods: {
       handleClose(done) {
@@ -152,15 +148,12 @@
         if(this.radio == 1){//文本
 
           this.axios({
-            url: 'http://192.168.0.2:49003/nlp/search/searchingIndex',
+            url: 'http://192.168.0.2:49003/search/searchingIndex',
             method: 'post',
             data: {
-              // similarDegree: this.similarDegree,
-              // targetLength: this.targetLength,
-              // searchTxt: this.searchTxt,
-              similarDegree: 0.5,
-              targetLength: 1,
-              searchTxt: '系统',
+              similarDegree: this.similarDegree,
+              targetLength: this.targetLength,
+              searchTxt: this.searchTxt,
               searchIngType: 'txt'
             },
             transformRequest: [function (data) {
@@ -180,7 +173,7 @@
               this.tableData = response.data.data.searchingList;
             })
             .catch((response) => {
-              console.log(response);
+              // console.log(response);
             });
 
         }else if(this.radio == 2){//文档
@@ -191,10 +184,10 @@
 
       },
       handleRemove(file, fileList) {
-        console.log(file, fileList);
+        // console.log(file, fileList);
       },
       handlePreview(file) {
-        console.log(file);
+        // console.log(file);
       },
       handleExceed(files, fileList) {
         this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);

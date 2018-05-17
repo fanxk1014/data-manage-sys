@@ -32,9 +32,9 @@
           <el-button
             size="mini"
             @click="handleEdit(scope.$index, scope.row);dialogVisible = true;">
-              <router-link :to="{name:'history/detail',params:{searchId:id}}">
+              <!--<router-link :to="{name:'history/detail',params:{historyId:id}}">-->
                 详情
-              </router-link>
+              <!--</router-link>-->
           </el-button>
         </template>
       </el-table-column>
@@ -54,9 +54,10 @@
       :visible.sync="dialogVisible"
       width="80%"
       :before-close="handleClose">
-      <router-view></router-view>
+
+      <detail :historyId="id" :idType="2"></detail>
+
       <span slot="footer" class="dialog-footer">
-    <!--<el-button @click="dialogVisible = false">取 消</el-button>-->
     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
   </span>
     </el-dialog>
@@ -66,6 +67,7 @@
 </template>
 
 <script>
+  import detail from '../detail/Detail'
   export default {
     name: 'History',
     data() {
@@ -80,11 +82,14 @@
         totalItems: ''
       }
     },
+    components: {
+      detail: detail
+    },
     methods: {
       search: function(){
         this.currentPage = 1;
         this.axios({
-          url: 'http://192.168.0.2:49003/nlp/search/searchHistory/',
+          url: 'http://192.168.0.2:49003/search/searchHistory/',
           method: 'post',
           data: {
             searchWord: this.value,
@@ -109,23 +114,22 @@
             this.searchStatus = true;
           })
           .catch((response) => {
-            console.log(response);
+            // console.log(response);
           });
       },
       handleEdit(index, row) {
-        console.log(row.id);
         this.id = row.id
       },
       handleClose(done) {
         done();
       },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+        // console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
         this.currentPage = val;
         this.axios({
-          url: 'http://192.168.0.2:49003/nlp/search/searchHistory/',
+          url: '/search/searchHistory/',
           method: 'post',
           data: {
             searchWord: this.value,
@@ -150,7 +154,7 @@
             this.searchStatus = true;
           })
           .catch((response) => {
-            console.log(response);
+            // console.log(response);
           });
       }
     },

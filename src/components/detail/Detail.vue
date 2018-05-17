@@ -1,6 +1,8 @@
 <template>
   <div>
     <div >
+      <!--{{checkId}}-{{historyId}}-type{{idType}}-->
+      <!--<button @click="show">btn</button>-->
       <span class="title">知识列表</span>
       <el-table
         :data="tableData" border
@@ -65,44 +67,157 @@
 
 <script>
   export default {
-    name: 'Detail',
+    name: 'detail',
     data () {
       return {
         tableData:[],
         searchId:''
       }
     },
-    mounted: function(){
-      this.searchId = this.$route.params.searchId;
-      this.axios({
-        url: 'http://192.168.0.2:49003/nlp/search/searchDetails',
-        method: 'get',
-        data: {
-          searchId: this.$route.params.searchId
-        },
-        transformRequest: [function (data) {
-          let ret = ''
-          for (let it in data) {
-            ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-          }
-          return ret
-        }],
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      })
-        .then((response) => {
-          console.log('detail:',this.$route.params.searchId,response.data.data.searchingList);
-          this.tableData = response.data.data.searchingList;
-        })
-        .catch((response) => {
-          console.log(response);
-        });
+    methods:{
+      show(){
+        alert(this.historyId);
+      }
     },
-    deactivated () {
-      this.$destroy()
-    }
+    mounted:function(){
+      if(this.$props.idType == 1){
+        this.searchId = this.$props.checkId
+      }else if(this.$props.idType == 2){
+        this.searchId = this.$props.historyId
+      }
+      if(this.searchId){
+        this.axios({
+          url: 'http://192.168.0.2:49003/search/searchDetails?searchId='+this.searchId,
+          method: 'get',
+          data: {
+            searchId: this.searchId
+          },
+          transformRequest: [function (data) {
+            let ret = ''
+            for (let it in data) {
+              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+            }
+            return ret
+          }],
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        })
+          .then((response) => {
+            this.tableData = [];
+            this.tableData = response.data.data.searchingList;
+          })
+          .catch((response) => {
+            // console.log('error');
+            this.tableData = [];
+          });
+      }
+
+    },
+    watch: {
+      searchId (val, oldval) {
+        // console.log('searchId改变：',val)
+
+        if(this.$props.checkId){
+          this.searchId = this.$props.checkId;
+        }else if(this.$props.historyId) {
+          this.searchId = this.$props.historyId;
+        }
+
+        if(this.searchId) {
+          this.axios({
+            url: 'http://192.168.0.2:49003/search/searchDetails?searchId=' + this.searchId,
+            method: 'get',
+            data: {
+              searchId: this.searchId
+            },
+            transformRequest: [function (data) {
+              let ret = ''
+              for (let it in data) {
+                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+              }
+              return ret
+            }],
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          })
+            .then((response) => {
+              this.tableData = [];
+              this.tableData = response.data.data.searchingList;
+            })
+            .catch((response) => {
+              // console.log('error');
+              this.tableData = [];
+            });
+        }
+      },
+      ['checkId'] (val, oldval) {
+        // console.log('checkId改变：',val)
+        this.searchId = this.$props.checkId;
+        if(this.searchId) {
+          this.axios({
+            url: 'http://192.168.0.2:49003/search/searchDetails?searchId=' + this.searchId,
+            method: 'get',
+            data: {
+              searchId: this.searchId
+            },
+            transformRequest: [function (data) {
+              let ret = ''
+              for (let it in data) {
+                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+              }
+              return ret
+            }],
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          })
+            .then((response) => {
+              this.tableData = [];
+              this.tableData = response.data.data.searchingList;
+            })
+            .catch((response) => {
+              // console.log('error');
+              this.tableData = [];
+            });
+        }
+      },
+      ['historyId'](val, oldval) {
+        // console.log('historyId改变：',val,oldval)
+        this.searchId = this.$props.historyId;
+        this.axios({
+          url: 'http://192.168.0.2:49003/search/searchDetails?searchId='+this.searchId,
+          method: 'get',
+          data: {
+            searchId: this.searchId
+          },
+          transformRequest: [function (data) {
+            let ret = ''
+            for (let it in data) {
+              ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+            }
+            return ret
+          }],
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        })
+          .then((response) => {
+            this.tableData = [];
+            this.tableData = response.data.data.searchingList;
+          })
+          .catch((response) => {
+            // console.log('error');
+            this.tableData = [];
+          });
+      }
+    },
+    props:['checkId','historyId','idType']
   }
 </script>
 

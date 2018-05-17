@@ -131,7 +131,7 @@
         file: '',
         state3: '',
         data:{treeId:1},
-        url:"http://192.168.0.2:49003/nlp/doc/upload/",
+        url:"/doc/upload/",
         currentPage: 1,
         totalItems: ''
       }
@@ -145,7 +145,7 @@
       },
       search:function(){
         this.axios({
-          url: 'http://192.168.0.2:49003/nlp/doc/searchDocument/',
+          url: '/doc/searchDocument/',
           method: 'post',
           data: {
             page: 0,
@@ -167,20 +167,21 @@
           .then((response) => {
             this.totalItems = response.data.data.totalElements;
             this.tableData = response.data.data.content;
-            console.log(response.data.data.content);
+            // console.log(response.data.data.content);
           })
           .catch((response) => {
-            console.log(response);
+            // console.log(response);
           });
       },
       submitUpload() {
         this.$refs.upload.submit();
+        // console.log();
       },
       handleRemove(file, fileList) {
-        console.log(file, fileList);
+        // console.log(file, fileList);
       },
       handlePreview(file) {
-        console.log(file);
+        // console.log(file);
       },
       handleExceed(files, fileList) {
         this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
@@ -190,7 +191,7 @@
       },
       getFile($event){
         this.file = $event.target.files[0] //获取要上传的文件
-        console.log(this.file);
+        // console.log(this.file);
       },
 
       // 知识库类型tree选择器
@@ -211,18 +212,18 @@
       },
       handleSelect(item) {
         this.state3 = item.children[0].name
-        console.log(item.children[0].name);
+        // console.log(item.children[0].name);
       },
       handleIconClick(ev) {//点击sel图标
         // console.log(ev);
       },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+        // console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
         this.currentPage = val;
         this.axios({
-          url: 'http://192.168.0.2:49003/nlp/doc/searchDocument/',
+          url: '/doc/searchDocument/',
           method: 'post',
           data: {
             fileName: this.fileName,
@@ -247,7 +248,7 @@
             this.searchStatus = true;
           })
           .catch((response) => {
-            console.log(response);
+            // console.log(response);
           });
       }
 
@@ -255,7 +256,7 @@
     mounted:function(){
 
       this.axios({
-        url: 'http://192.168.0.2:49003/nlp/tree/getTree',
+        url: '/tree/getTree',
         method: 'get',
         headers: {
           'Accept': 'application/json',
@@ -266,7 +267,7 @@
           this.selArr = response.data.data;
         })
         .catch((response) => {
-          console.log(response);
+          // console.log(response);
         });
 
 
