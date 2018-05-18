@@ -52,9 +52,11 @@
               ref="upload" multiple
               :name="fileName"
               :action="url"
-              :data="data2"
+              :data="checkData"
+              :on-exceed="handleExceed"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :before-upload="beforeUpload"
               :on-success="loadSuccess"
               :on-error="loadFail"
               :file-list="fileList"
@@ -134,11 +136,11 @@
         fileName: 'searchFile',
         searchId: '',
         url:Global.address+'/search/searchingIndex',
-        data2:{
+        checkData:{
           similarDegree: '',
           targetLength: '',
-          searchIngType: 'docx',
-          searchTxt: ''
+          searchIngType: '',
+          // searchTxt: ''
         }
       }
     },
@@ -146,7 +148,7 @@
       detail: detail
     },
     mounted:function(){
-      console.log(Global.address)
+      // console.log(Global.address)
   },
     methods: {
       handleClose(done) {
@@ -186,8 +188,8 @@
             });
 
         }else if(this.radio == 2){//文档
-          this.data2.similarDegree = this.similarDegree;
-          this.data2.targetLength = this.targetLength;
+          this.checkData.similarDegree = this.similarDegree;
+          this.checkData.targetLength = this.targetLength;
           this.loading = true
           this.$refs.upload.submit();
           this.loading = false
@@ -206,9 +208,12 @@
       beforeRemove(file, fileList) {
         return this.$confirm(`确定移除 ${ file.name }？`);
       },
+      beforeUpload(file) {
+        this.checkData.searchIngType = file.name.substring(file.name.lastIndexOf(".")+1,file.name.length);//后缀名
+      },
       loadSuccess(response, file, fileList){
         this.$message({
-          message: '上传成功',
+          message: '检索成功',
           type: 'success'
         });
         this.searchId = response.data.searchingMainId;
@@ -217,7 +222,7 @@
       loadFail(){
         this.$message({
           showClose: true,
-          message: '上传失败',
+          message: '检索失败',
           type: 'error'
         });
       }

@@ -61,42 +61,27 @@
       :visible.sync="dialogVisible"
       width="30%" :before-close="handleClose">
 
-      <el-autocomplete
-        popper-class="my-autocomplete"
-        v-model="state3"
-        :fetch-suggestions="querySearch"
-        placeholder="请输入内容"
-        @select="handleSelect">
-        <i
-          class="el-icon-search el-input__icon"
-          slot="suffix"
-          @click="handleIconClick">
-        </i>
-        <template slot-scope="{ item }">
-          <!--<div class="first">{{ item.name }}</div>-->
+      <div id="sel-tree">
+        <el-tree
+          :data="selArr"
+          show-checkbox
+          node-key="id"
+          @node-click="handleNodeClick"
+          @check-change="handleCheckChange"
+          :props="defaultProps">
+        </el-tree>
+      </div>
 
-          <div class="sec">{{item.children[0].name}}</div>
-          <!--<div class="sec">{{item.children[1].name}}</div>-->
-          <!--<div v-if="item.children" class="sec">{{item.children[1].name}}</div>-->
-        </template>
-      </el-autocomplete>
-
-      <!--<el-tree-->
-        <!--:data="selArr"-->
-        <!--show-checkbox-->
-        <!--node-key="id"-->
-        <!--:default-expanded-keys="[2, 3]"-->
-        <!--:default-checked-keys="[5]"-->
-        <!--:props="defaultProps">-->
-      <!--</el-tree>-->
 
       <el-upload
         class="upload-demo"
-        ref="upload" multiple
+        ref="upload"
         :action="url"
-        :data="data"
-        :on-preview="handlePreview"
+        :data="uploadData"
+        :multiple="false"
+        :on-exceed="handleExceed"
         :on-remove="handleRemove"
+        :before-upload="beforeUpload"
         :on-success="loadSuccess"
         :on-error="loadFail"
         :file-list="fileList"
@@ -130,10 +115,14 @@
         dialogFormVisible: false,
         dialogVisible: false,
         selArr: [],
+        inputSel:'',
+        defaultProps: {
+          children: 'children',
+          label: 'name'
+        },
         restaurants: [],
         file: '',
-        state3: '',
-        data:{treeId:1},
+        uploadData:{treeId:''},
         url:Global.address+"/doc/upload/",
         currentPage: 1,
         totalItems: ''
@@ -141,12 +130,13 @@
     },
     methods: {
       openDialog:function(){
-        this.restaurants = this.loadAll();
+
       },
       handleClose(done) {
         done();
       },
       search:function(){
+
         this.axios({
           url: Global.address+'/doc/searchDocument/',
           method: 'post',
@@ -178,47 +168,19 @@
       },
       submitUpload() {
         this.$refs.upload.submit();
-        // console.log();
       },
       handleRemove(file, fileList) {
-        // console.log(file, fileList);
-      },
-      handlePreview(file) {
-        // console.log(file);
+        return this.$confirm(`确定移除 ${ file.name }？`);
       },
       handleExceed(files, fileList) {
-        this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+        this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
       },
       beforeRemove(file, fileList) {
         return this.$confirm(`确定移除 ${ file.name }？`);
       },
       getFile($event){
         this.file = $event.target.files[0] //获取要上传的文件
-        // console.log(this.file);
-      },
-
-      // 知识库类型tree选择器
-      querySearch(queryString, cb) {
-        var restaurants = this.restaurants;
-        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
-        // 调用 callback 返回建议列表的数据
-        cb(results);
-      },
-      createFilter(queryString) {
-        return (restaurant) => {
-          return (restaurant);
-        };
-      },
-      loadAll() {
-        // console.log('loadAll:',this.selArr);
-        return this.selArr;
-      },
-      handleSelect(item) {
-        this.state3 = item.children[0].name
-        // console.log(item.children[0].name);
-      },
-      handleIconClick(ev) {//点击sel图标
-        // console.log(ev);
+        console.log(this.file);
       },
       handleSizeChange(val) {
         // console.log(`每页 ${val} 条`);
@@ -256,6 +218,9 @@
             this.searchStatus = false;
           });
       },
+      beforeUpload(file) {
+        this.uploadData.treeId = file.name.substring(file.name.lastIndexOf(".")+1,file.name.length);//后缀名
+      },
       loadSuccess(response, file, fileList){
         this.$message({
           message: '上传成功',
@@ -268,8 +233,16 @@
           message: '上传失败',
           type: 'error'
         });
-      }
+      },
+      handleNodeClick(data) {
+        // console.log(data);
+      },
+      handleCheckChange(data, checked, indeterminate) {
 
+        if(checked == true){
+          console.log(data.id);
+        }
+      },
     },
     mounted:function(){
       this.loading = true
@@ -301,6 +274,22 @@
         .catch((response) => {
           this.loading = false
         });
+
+      this.axios({
+        url: Global.address+'/tree/getTree',
+        method: 'get',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+        .then((response) => {
+          console.log(response.data.data);
+          this.selArr = response.data.data
+        })
+        .catch((response) => {
+          this.loading = false
+        });
     }
   }
 </script>
@@ -327,29 +316,10 @@
   .upload-demo,#file{
     margin-top: 10px;
   }
-  .el-select{
-    margin-bottom: 10px;
-  }
-
   #sel-tree{
     width: 200px;
     height: 150px;
     overflow: auto;
     border: 1px solid #e4e7ed;
   }
-  .my-autocomplete li {
-    line-height: normal;
-    padding: 7px;
-  }
-  .my-autocomplete .first {
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-  .my-autocomplete .sec {
-    margin-left: 10px;
-  }
-  .my-autocomplete .highlighted .addr {
-    color: #ddd;
-  }
-
 </style>
