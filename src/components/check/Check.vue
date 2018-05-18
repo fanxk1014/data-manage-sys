@@ -140,7 +140,7 @@
           similarDegree: '',
           targetLength: '',
           searchIngType: '',
-          // searchTxt: ''
+          searchIngType: '',
         }
       }
     },

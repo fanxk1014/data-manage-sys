@@ -72,7 +72,6 @@
         </el-tree>
       </div>
 
-
       <el-upload
         class="upload-demo"
         ref="upload"
@@ -180,7 +179,7 @@
       },
       getFile($event){
         this.file = $event.target.files[0] //获取要上传的文件
-        console.log(this.file);
+        // console.log(this.file);
       },
       handleSizeChange(val) {
         // console.log(`每页 ${val} 条`);
@@ -240,7 +239,7 @@
       handleCheckChange(data, checked, indeterminate) {
 
         if(checked == true){
-          console.log(data.id);
+          // console.log(data.id);
         }
       },
     },
@@ -284,7 +283,7 @@
         }
       })
         .then((response) => {
-          console.log(response.data.data);
+          // console.log(response.data.data);
           this.selArr = response.data.data
         })
         .catch((response) => {
