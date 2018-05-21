@@ -1,8 +1,6 @@
 <template>
   <div>
     <div >
-      <!--{{checkId}}-{{historyId}}-type{{idType}}-->
-      <!--<button @click="show">btn</button>-->
       <span class="title">知识列表</span>
       <el-table
         :data="tableData" border
@@ -63,7 +61,6 @@
       </el-table>
     </div>
 
-
   </div>
 </template>
 
@@ -75,11 +72,14 @@
       return {
         tableData:[],
         searchId:'',
-        loading: false
+        loading: false,
+        winHeight:''
       }
     },
     methods:{
-
+      back(){
+        this.$router.go(-1)
+      },
     },
     mounted:function(){
       if(this.$props.idType == 1){
@@ -118,7 +118,6 @@
             this.loading = false
           });
       }
-
     },
     watch: {
       searchId (val, oldval) {
@@ -258,7 +257,10 @@
   }
   #dialog1 .el-dialog__body,
   #dialog2 .el-dialog__body{
-    height: 500px;
-    overflow: auto;
+    /*height: 500px;*/
+    /*overflow: auto;*/
+  }
+  .el-dialog{
+    margin-top: 10px !important;
   }
 </style>

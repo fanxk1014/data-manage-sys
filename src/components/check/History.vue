@@ -53,7 +53,7 @@
     <el-dialog id="dialog2"
       title="详情"
       :visible.sync="dialogVisible"
-      width="80%"
+      width="99%"
       :before-close="handleClose">
 
       <detail :historyId="id" :idType="2"></detail>

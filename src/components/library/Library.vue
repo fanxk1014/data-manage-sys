@@ -32,7 +32,7 @@
       </el-table-column>
       <el-table-column
         prop="indexingType"
-        label="索引类型"
+        label="知识库类型"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
@@ -59,7 +59,7 @@
     <el-dialog
       title="新增知识库"
       :visible.sync="dialogVisible"
-      width="30%" :before-close="handleClose">
+      width="30%" style="margin-top: 15vh" :before-close="handleClose">
 
       <div id="sel-tree">
         <el-tree

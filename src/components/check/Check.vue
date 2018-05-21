@@ -99,7 +99,7 @@
     <el-dialog id="dialog1"
       title="识别结果"
       :visible.sync="dialogVisible"
-      width="80%" :before-close="handleClose">
+      width="99%" :before-close="handleClose">
 
       <detail :checkId="searchId" :idType="1"></detail>
 
@@ -149,7 +149,7 @@
     },
     mounted:function(){
       // console.log(Global.address)
-  },
+    },
     methods: {
       handleClose(done) {
         done();
