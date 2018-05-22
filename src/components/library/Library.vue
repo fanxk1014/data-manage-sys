@@ -61,16 +61,19 @@
       :visible.sync="dialogVisible"
       width="30%" style="margin-top: 15vh" :before-close="handleClose">
 
-      <div id="sel-tree">
-        <el-tree
-          :data="selArr"
-          show-checkbox
-          node-key="id"
-          @node-click="handleNodeClick"
-          @check-change="handleCheckChange"
-          :props="defaultProps">
-        </el-tree>
-      </div>
+        <el-select v-model="valueDefault" placeholder="请选择知识库类型" @change="changeValue">
+          <el-option-group
+            v-for="group in selArr"
+            :key="group.name"
+            :label="group.name">
+            <el-option
+              v-for="item in group.children"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-option-group>
+        </el-select>
 
       <el-upload
         class="upload-demo"
@@ -111,15 +114,10 @@
         fileName: '',
         tableData: [],
         fileList: [],
+        valueDefault:'',
         dialogFormVisible: false,
         dialogVisible: false,
         selArr: [],
-        inputSel:'',
-        defaultProps: {
-          children: 'children',
-          label: 'name'
-        },
-        restaurants: [],
         file: '',
         uploadData:{treeId:''},
         url:Global.address+"/doc/upload/",
@@ -159,10 +157,8 @@
           .then((response) => {
             this.totalItems = response.data.data.totalElements;
             this.tableData = response.data.data.content;
-            // console.log(response.data.data.content);
           })
           .catch((response) => {
-            // console.log(response);
           });
       },
       submitUpload() {
@@ -179,7 +175,6 @@
       },
       getFile($event){
         this.file = $event.target.files[0] //获取要上传的文件
-        // console.log(this.file);
       },
       handleSizeChange(val) {
         // console.log(`每页 ${val} 条`);
@@ -213,12 +208,11 @@
             this.searchStatus = false;
           })
           .catch((response) => {
-            // console.log(response);
             this.searchStatus = false;
           });
       },
       beforeUpload(file) {
-        this.uploadData.treeId = file.name.substring(file.name.lastIndexOf(".")+1,file.name.length);//后缀名
+        // this.uploadData.treeId = file.name.substring(file.name.lastIndexOf(".")+1,file.name.length);//后缀名
       },
       loadSuccess(response, file, fileList){
         this.$message({
@@ -233,15 +227,9 @@
           type: 'error'
         });
       },
-      handleNodeClick(data) {
-        // console.log(data);
-      },
-      handleCheckChange(data, checked, indeterminate) {
-
-        if(checked == true){
-          // console.log(data.id);
-        }
-      },
+      changeValue(value){
+        this.uploadData.treeId = value;
+      }
     },
     mounted:function(){
       this.loading = true
@@ -268,10 +256,10 @@
         .then((response) => {
           this.totalItems = response.data.data.totalElements;
           this.tableData = response.data.data.content;
-          this.loading = false
+          this.loading = false;
         })
         .catch((response) => {
-          this.loading = false
+          this.loading = false;
         });
 
       this.axios({
@@ -283,7 +271,6 @@
         }
       })
         .then((response) => {
-          // console.log(response.data.data);
           this.selArr = response.data.data
         })
         .catch((response) => {
