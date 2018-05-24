@@ -14,17 +14,14 @@
       </tr>
       <tr>
         <td>
-          <span class="title">招标代理</span>
-          <p>
-            <el-checkbox v-model="checked1">招标文件</el-checkbox>
-          </p>
-          <p>
-            <el-checkbox v-model="checked2">合同范本</el-checkbox>
-          </p>
-          <span class="title">工程咨询</span>
-          <p>
-            <el-checkbox v-model="checked3">可行性研究</el-checkbox>
-          </p>
+          <el-tree id="checkType"
+            :data="treeData"
+            :props="props"
+            show-checkbox
+            default-expand-all
+            check-strictly
+            @check-change="handleCheckChange">
+          </el-tree>
         </td>
         <td>
           <p>
@@ -126,9 +123,8 @@
         searchTxt: '',
         searchIngType: '',
         searchFile: '',
-        checked1:'',
-        checked2:'',
-        checked3:'',
+        typeArr:[],//知识分类
+        typeString:'',//知识分类-向后台传参用string格式
         dialogFormVisible: false,
         dialogVisible: false,
         fileList: [],
@@ -136,11 +132,17 @@
         fileName: 'searchFile',
         searchId: '',
         url:Global.address+'/search/searchingIndex',
-        checkData:{
+        treeData:[],
+        props: {
+          label: 'name',
+          children: 'children'
+        },
+        checkData:{//识别-随文档所传参数
           similarDegree: '',
           targetLength: '',
           searchIngType: '',
           searchIngType: '',
+          treeId: ''
         }
       }
     },
@@ -148,15 +150,37 @@
       detail: detail
     },
     mounted:function(){
-      // console.log(Global.address)
+      this.axios({
+        url: Global.address+'/tree/getTree',
+        method: 'get',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+        .then((response) => {
+          this.treeData = response.data.data
+        })
+        .catch((response) => {
+        });
     },
     methods: {
       handleClose(done) {
         done();
       },
+      handleCheckChange(data, checked) {
+        if(checked == true){
+          this.typeArr.push(data.id)
+        }else if(checked == false){
+          if (this.typeArr.indexOf(data.id) > -1) {
+            this.typeArr.splice(this.typeArr.indexOf(data.id), 1);
+          }
+        }
+      },
       check:function(){
+        this.typeString = this.typeArr.join(',');
         if(this.radio == 1){//文本
-          this.loading = true
+          this.loading = true;
           this.axios({
             url: Global.address+'/search/searchingIndex',
             method: 'post',
@@ -164,7 +188,8 @@
               similarDegree: this.similarDegree,
               targetLength: this.targetLength,
               searchTxt: this.searchTxt,
-              searchIngType: 'txt'
+              searchIngType: 'txt',
+              treeId: this.typeString
             },
             transformRequest: [function (data) {
               let ret = ''
@@ -190,17 +215,16 @@
         }else if(this.radio == 2){//文档
           this.checkData.similarDegree = this.similarDegree;
           this.checkData.targetLength = this.targetLength;
-          this.loading = true
+          this.loading = true;
+          this.checkData.treeId = this.typeString;
           this.$refs.upload.submit();
           this.loading = false
         }
 
       },
       handleRemove(file, fileList) {
-        // console.log(file, fileList);
       },
       handlePreview(file) {
-        // console.log(file);
       },
       handleExceed(files, fileList) {
         this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
