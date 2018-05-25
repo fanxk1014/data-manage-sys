@@ -22,28 +22,33 @@
             check-strictly
             @check-change="handleCheckChange">
           </el-tree>
+          <span id="temp1">
+            清单识别
+          </span>
+          <span id="temp2">
+            <el-checkbox v-model="checked1">清单识别</el-checkbox>
+          </span>
         </td>
         <td>
-          <p>
-            <span class="title">相似度</span>
-            <el-input v-model="similarDegree" placeholder="请输入内容"></el-input>
-            （相似度=匹配文字/最小段落字数）
-          </p>
-          <p>
-            <span class="title">段落</span>
-            <el-input v-model="targetLength" placeholder="请输入内容"></el-input>
-            （设置匹配结果的最小段落长度）
-          </p>
-          <p>
+          <!--<p>-->
+            <!--<span class="title">相似度</span>-->
+            <!--<el-input v-model="similarDegree" placeholder="请输入内容"></el-input>-->
+            <!--（相似度=匹配文字/最小段落字数）-->
+          <!--</p>-->
+          <!--<p>-->
+            <!--<span class="title">段落</span>-->
+            <!--<el-input v-model="targetLength" placeholder="请输入内容"></el-input>-->
+            <!--（设置匹配结果的最小段落长度）-->
+          <!--</p>-->
+          <p class="newPos">
             <span class="title">检索方式</span>
             <el-radio v-model="radio" label="1">文本</el-radio>
             <el-radio v-model="radio" label="2">文档</el-radio>
           </p>
-          <p v-if="radio == 1">
-            <span class="title">文本</span>
-            <textarea v-model="searchTxt" rows="6" cols="40" style="resize: none;"></textarea>
+          <p class="newPos" v-if="radio == 1">
+            <textarea v-model="searchTxt" rows="10" cols="60" style="resize: none;"></textarea>
           </p>
-          <p v-if="radio == 2">
+          <p class="newPos" v-if="radio == 2">
             <el-upload
               class="upload-demo"
               ref="upload" multiple
@@ -84,7 +89,7 @@
             </el-table-column>
             <el-table-column
               prop="similarDegree"
-              label="匹配度"
+              label="重复字数"
               width="100">
             </el-table-column>
           </el-table>
@@ -118,8 +123,8 @@
       return {
         loading: false,
         radio: '1',//1:文本，2：文档
-        similarDegree: '',
-        targetLength: '',
+        // similarDegree: '',
+        // targetLength: '',
         searchTxt: '',
         searchIngType: '',
         searchFile: '',
@@ -138,12 +143,13 @@
           children: 'children'
         },
         checkData:{//识别-随文档所传参数
-          similarDegree: '',
-          targetLength: '',
+          // similarDegree: '',
+          // targetLength: '',
           searchIngType: '',
           searchIngType: '',
           treeId: ''
-        }
+        },
+        checked1:''
       }
     },
     components: {
@@ -185,8 +191,8 @@
             url: Global.address+'/search/searchingIndex',
             method: 'post',
             data: {
-              similarDegree: this.similarDegree,
-              targetLength: this.targetLength,
+              // similarDegree: this.similarDegree,
+              // targetLength: this.targetLength,
               searchTxt: this.searchTxt,
               searchIngType: 'txt',
               treeId: this.typeString
@@ -204,6 +210,7 @@
             }
           })
             .then((response) => {
+              console.log(response.data.data.searchingList)
               this.searchId = response.data.data.searchingMainId;
               this.tableData = response.data.data.searchingList;
               this.loading = false
@@ -213,8 +220,8 @@
             });
 
         }else if(this.radio == 2){//文档
-          this.checkData.similarDegree = this.similarDegree;
-          this.checkData.targetLength = this.targetLength;
+          // this.checkData.similarDegree = this.similarDegree;
+          // this.checkData.targetLength = this.targetLength;
           this.loading = true;
           this.checkData.treeId = this.typeString;
           this.$refs.upload.submit();
@@ -280,6 +287,9 @@
     line-height: 31px;
     font-size: 14px;
   }
+  table tr{
+    vertical-align: baseline;
+  }
   th,td{
     border: 1px solid #ebebeb;
     padding: 5px;
@@ -293,5 +303,12 @@
   }
   p{
     margin-bottom: 5px;
+  }
+  #temp1{
+    display: block;
+    margin-left: 22px;
+  }
+  #temp2{
+    margin-left: 42px;
   }
 </style>

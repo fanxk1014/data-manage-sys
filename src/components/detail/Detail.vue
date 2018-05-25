@@ -1,7 +1,45 @@
 <template>
   <div>
-    <div >
-      <span class="title">知识列表</span>
+    <hr>
+    <div id="part1">
+      <h3 class="title">识别总览</h3>
+      <p>
+        <span class="item fontRed">总文字复制比：20.9%</span>
+      </p>
+      <p>
+        <span class="item">单篇最大文字复制比：7.2%</span>
+      </p>
+      <table>
+        <tr>
+          <td>重复字数：</td>
+          <td>969</td>
+          <td>总字数：</td>
+          <td>4630</td>
+          <td>单篇最大重复字数:</td>
+          <td>333</td>
+        </tr>
+        <tr>
+          <td>总段落数：</td>
+          <td>1</td>
+          <td>总文字复制比：</td>
+          <td>20.9%</td>
+          <td>疑似段落最大重合字数：</td>
+          <td>969</td>
+        </tr>
+        <tr>
+          <td>疑似段落数：</td>
+          <td>1</td>
+          <td>单篇最大文字复制比：</td>
+          <td>7.2%</td>
+          <td>疑似段落最小重合字数：</td>
+          <td>969</td>
+        </tr>
+      </table>
+
+    </div>
+    <hr>
+    <div id="part2">
+      <h3 class="title">知识列表</h3>
       <el-table
         :data="tableData" border
         v-loading="loading"
@@ -15,10 +53,11 @@
           width="">
           <template slot-scope="scope">
             <span style="margin-left: 10px" v-html="scope.row.fileName"></span>
+            <div style="color: #969696">张欢（导师：黄喜兵）-西南交通大学硕士论文 2016-10-01</div>
           </template>
         </el-table-column>
         <el-table-column
-          label="相似度"
+          label="文字复制比"
           width="">
           <template slot-scope="scope">
             <span style="margin-left: 10px" v-html="scope.row.similarDegree"></span>
@@ -29,13 +68,15 @@
           width="">
           <template slot-scope="scope">
             <!--<span style="margin-left: 10px" v-html="scope.row.similarDegree"></span>-->
+            (333)
+            <div>招标文件</div>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <br>
-    <div>
-      <span class="title">内容对比</span>
+    <hr>
+    <div id="part3">
+      <h3 class="title">内容对比</h3>
       <el-table
         :data="tableData" border
         v-loading="loading"
@@ -48,6 +89,7 @@
           label="原文内容"
           width="">
           <template slot-scope="scope">
+            <div style="color: darkred;margin-bottom: 5px;text-align: center;">此处有46字相似</div>
             <span style="margin-left: 10px" v-html="scope.row.sourceContent"></span>
           </template>
         </el-table-column>
@@ -55,6 +97,12 @@
           label="相似内容来源"
           width="">
           <template slot-scope="scope">
+            <div style="color: darkred;">
+              清新区区域路网升级改造工程（禾云镇新塘村暗塘岗桥改建工程）招标文件发售稿-2018.03.08定稿.doc
+            </div>
+            <div style="color: darkred;">
+              作者：张欢（招标文件）
+            </div>
             <span style="margin-left: 10px" v-html="scope.row.targetContent"></span>
           </template>
         </el-table-column>
@@ -150,17 +198,16 @@
             .then((response) => {
               this.tableData = [];
               this.tableData = response.data.data.searchingList;
+              console.log(response.data.data.searchingList)
               this.loading = false
             })
             .catch((response) => {
-              // console.log('error');
               this.tableData = [];
               this.loading = false
             });
         }
       },
       ['checkId'] (val, oldval) {
-        // console.log('checkId改变：',val)
         this.searchId = this.$props.checkId;
         if(this.searchId) {
           this.loading = true
@@ -237,23 +284,34 @@
   h1, h2 {
     font-weight: normal;
   }
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  li {
-    display: inline-block;
-    margin: 0 10px;
-  }
   a {
     color: #42b983;
   }
   #btnNav{
     margin-bottom: 10px;
   }
-  .title{
-    font-weight: 600;
-    font-size: 16px;
+  h3{
+    margin: 5px 0px;
+  }
+  hr{
+    margin: 5px 0px;
+  }
+  .fontRed{
+    color: darkred;
+  }
+  #part1 table{
+    border-collapse: collapse;
+    width: 50%;
+  }
+  #part1 table tr{
+    line-height: 35px;
+  }
+  #part1 table td{
+    border: 1px solid #dedede;
+    padding: 5px 10px;
+  }
+  .item{
+    margin: 0px 50px 0px 50px;
   }
   #dialog1 .el-dialog__body,
   #dialog2 .el-dialog__body{
