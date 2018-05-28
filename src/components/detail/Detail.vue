@@ -1,38 +1,38 @@
 <template>
   <div>
-    <hr>
+    <hr>{{searchId}}
     <div id="part1">
       <h3 class="title">识别总览</h3>
       <p>
-        <span class="item fontRed">总文字复制比：20.9%</span>
+        <span class="item fontRed">总文字复制比：{{copyRate}}</span>
       </p>
       <p>
-        <span class="item">单篇最大文字复制比：7.2%</span>
+        <span class="item">单篇最大文字复制比：{{singerMaxCopyRate}}</span>
       </p>
       <table>
         <tr>
           <td>重复字数：</td>
-          <td>969</td>
+          <td>{{repeatWords}}</td>
           <td>总字数：</td>
-          <td>4630</td>
+          <td>{{totalWords}}</td>
           <td>单篇最大重复字数:</td>
-          <td>333</td>
+          <td>{{singerMaxRepeatWords}}</td>
         </tr>
         <tr>
           <td>总段落数：</td>
           <td>1</td>
           <td>总文字复制比：</td>
-          <td>20.9%</td>
+          <td>{{copyRate}}</td>
           <td>疑似段落最大重合字数：</td>
-          <td>969</td>
+          <td>{{similarSectionMaxRepeatWords}}</td>
         </tr>
         <tr>
           <td>疑似段落数：</td>
-          <td>1</td>
+          <td>{{similarSectionNum}}</td>
           <td>单篇最大文字复制比：</td>
-          <td>7.2%</td>
+          <td>{{singerMaxCopyRate}}</td>
           <td>疑似段落最小重合字数：</td>
-          <td>969</td>
+          <td>{{similarSectionMinRepeatWords}}</td>
         </tr>
       </table>
 
@@ -121,7 +121,16 @@
         tableData:[],
         searchId:'',
         loading: false,
-        winHeight:''
+        winHeight:'',
+        singerMaxCopyRate:'单篇最大文字复制比', //单篇最大文字复制比
+        copyRate:'',//总复制比
+        totalWords:'',//总字数
+        singerMaxRepeatWords:'',//单篇最大重复字数
+        repeatWords:'',//重复字数
+        similarSectionMaxRepeatWords:'',//疑似段落最大重合字数
+        similarSectionMinRepeatWords:'',//疑似段落最小重合字数
+        similarSectionNum:'',//疑似段落数
+        singerMaxCopyRate:'',//单篇最大文字复制比
       }
     },
     methods:{

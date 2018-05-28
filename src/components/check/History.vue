@@ -15,27 +15,30 @@
       </el-table-column>
       <el-table-column
         prop="searchTime"
+        width="200"
         label="识别时间"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
         prop="fileType"
         label="文件类型"
+        width="200"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
         prop="treeId"
         label="知识类型"
+        width="200"
         show-overflow-tooltip>
       </el-table-column>
-      <el-table-column prop="" label="操作" show-overflow-tooltip>
+      <el-table-column prop="" label="操作" width="200" show-overflow-tooltip>
         <template slot-scope="scope">
           <el-button
             size="mini"
             @click="handleEdit(scope.$index, scope.row);dialogVisible = true;">
-              <!--<router-link :to="{name:'history/detail',params:{historyId:id}}">-->
+              <router-link :to="{name:'history/detail',params:{historyId:id}}">
                 详情
-              <!--</router-link>-->
+              </router-link>
           </el-button>
         </template>
       </el-table-column>

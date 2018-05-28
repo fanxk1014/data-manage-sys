@@ -88,7 +88,12 @@
               width="">
             </el-table-column>
             <el-table-column
-              prop="similarDegree"
+              prop="repeatRate"
+              label="重复率"
+              width="100">
+            </el-table-column>
+            <el-table-column
+              prop="repeatWords"
               label="重复字数"
               width="100">
             </el-table-column>
@@ -123,8 +128,6 @@
       return {
         loading: false,
         radio: '1',//1:文本，2：文档
-        // similarDegree: '',
-        // targetLength: '',
         searchTxt: '',
         searchIngType: '',
         searchFile: '',
@@ -143,8 +146,6 @@
           children: 'children'
         },
         checkData:{//识别-随文档所传参数
-          // similarDegree: '',
-          // targetLength: '',
           searchIngType: '',
           searchIngType: '',
           treeId: ''
@@ -191,8 +192,6 @@
             url: Global.address+'/search/searchingIndex',
             method: 'post',
             data: {
-              // similarDegree: this.similarDegree,
-              // targetLength: this.targetLength,
               searchTxt: this.searchTxt,
               searchIngType: 'txt',
               treeId: this.typeString
@@ -210,7 +209,6 @@
             }
           })
             .then((response) => {
-              console.log(response.data.data.searchingList)
               this.searchId = response.data.data.searchingMainId;
               this.tableData = response.data.data.searchingList;
               this.loading = false
@@ -220,8 +218,6 @@
             });
 
         }else if(this.radio == 2){//文档
-          // this.checkData.similarDegree = this.similarDegree;
-          // this.checkData.targetLength = this.targetLength;
           this.loading = true;
           this.checkData.treeId = this.typeString;
           this.$refs.upload.submit();
