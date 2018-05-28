@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hr>{{searchId}}
+    <hr>
     <div id="part1">
       <h3 class="title">识别总览</h3>
       <p>
