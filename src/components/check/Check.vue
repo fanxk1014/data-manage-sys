@@ -22,31 +22,15 @@
             check-strictly
             @check-change="handleCheckChange">
           </el-tree>
-          <span id="temp1">
-            清单识别
-          </span>
-          <span id="temp2">
-            <el-checkbox v-model="checked1">清单识别</el-checkbox>
-          </span>
         </td>
         <td>
-          <!--<p>-->
-            <!--<span class="title">相似度</span>-->
-            <!--<el-input v-model="similarDegree" placeholder="请输入内容"></el-input>-->
-            <!--（相似度=匹配文字/最小段落字数）-->
-          <!--</p>-->
-          <!--<p>-->
-            <!--<span class="title">段落</span>-->
-            <!--<el-input v-model="targetLength" placeholder="请输入内容"></el-input>-->
-            <!--（设置匹配结果的最小段落长度）-->
-          <!--</p>-->
           <p class="newPos">
             <span class="title">检索方式</span>
             <el-radio v-model="radio" label="1">文本</el-radio>
             <el-radio v-model="radio" label="2">文档</el-radio>
           </p>
           <p class="newPos" v-if="radio == 1">
-            <textarea v-model="searchTxt" rows="10" cols="60" style="resize: none;"></textarea>
+            <textarea v-model="searchTxt" rows="13" cols="60" style="resize: none;"></textarea>
           </p>
           <p class="newPos" v-if="radio == 2">
             <el-upload
@@ -108,7 +92,7 @@
       :visible.sync="dialogVisible"
       width="99%" :before-close="handleClose">
 
-      <detail :checkId="searchId" :idType="1"></detail>
+      <detail ref="detailCom" :checkId="searchId" :idType="1"></detail>
 
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -299,12 +283,5 @@
   }
   p{
     margin-bottom: 5px;
-  }
-  #temp1{
-    display: block;
-    margin-left: 22px;
-  }
-  #temp2{
-    margin-left: 42px;
   }
 </style>
